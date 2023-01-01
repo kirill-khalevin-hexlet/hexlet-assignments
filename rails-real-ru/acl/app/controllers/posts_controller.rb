@@ -2,28 +2,26 @@
 
 class PostsController < ApplicationController
   after_action :verify_authorized, except: %i[index show]
+  before_action :find_post, only: %i[show edit update destroy]
 
   # BEGIN
   def index
+    authorize Post
     @posts = Post.all
   end
 
-  def show
-    @post = Post.find params[:id]
-
-    @posts = @post.posts
-  end
+  def show; end
 
   def new
-    @post = Post.new
+    authorize Post
+    @post = current_user.posts.build
   end
 
-  def edit
-    @post = Post.find params[:id]
-  end
+  def edit; end
 
   def create
-    @post = Post.new(post_params)
+    authorize Post
+    @post = current_user.posts.build(post_params)
 
     if @post.save
       sign_in @post
@@ -34,8 +32,6 @@ class PostsController < ApplicationController
   end
 
   def update
-    @post = Post.find params[:id]
-
     if @post.update(post_params)
       redirect_to @post, notice: 'Post was successfully updated.'
     else
@@ -44,8 +40,6 @@ class PostsController < ApplicationController
   end
 
   def destroy
-    @post = Post.find params[:id]
-
     @post.destroy
 
     redirect_to posts_url, notice: 'Post was successfully destroyed.'
@@ -53,12 +47,16 @@ class PostsController < ApplicationController
 
   private
 
+  def find_post
+    @post = Post.find params[:id]
+    authorize @post
+  end
+
   # Only allow a list of trusted parameters through.
   def post_params
     params.require(:post).permit(
       :title,
-      :body,
-      :author_id
+      :body
     )
   end
   # END
