@@ -1,0 +1,10 @@
+
+not_published:
+  title: 'title'
+  body: 'body'
+  published: false
+
+published:
+  title: 'title'
+  body: 'body'
+  published: true
