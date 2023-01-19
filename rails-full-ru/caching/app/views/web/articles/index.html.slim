@@ -1,0 +1,12 @@
+= content_for :title do
+  = t('.articles')
+
+.row.row-cols-3
+  - @articles.each do |article|
+    / BEGIN
+    - cache article
+      p
+        = article.title
+      p
+        = article.body
+    / END
